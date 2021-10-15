@@ -1,5 +1,7 @@
 # Dispatch
 
+To run the examples, first start the proxy server. Then the edge device. Then the client.
+
 ![diagram](https://raw.githubusercontent.com/barbinbrad/dispatch/master/assets/diagram.png)
 
 ## The Problem
