@@ -22,7 +22,7 @@ const response = await fetch(url, {
 
 ## Running the tests
 
-To run the tests, you can run:
+Make sure you hae the server and edge device running. Then to run the tests, you can run:
 
 ```sh
 deno run --allow-net --allow-read  stress-test.ts
@@ -34,7 +34,6 @@ deno run --allow-net --allow-read  stress-test.ts
 - `-dongleid` is the `dongle_id` of the device to be proxied
 
 All of the flags are optional and will default to the values provided above.
-
 
 ## Installing Deno
 
