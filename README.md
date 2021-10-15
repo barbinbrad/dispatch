@@ -1,6 +1,6 @@
 # Dispatch
 
-[!diagram](https://raw.githubusercontent.com/barbinbrad/dispatch/master/assets/diagram.png)
+![diagram](https://raw.githubusercontent.com/barbinbrad/dispatch/master/assets/diagram.png)
 
 ## The Problem
 
@@ -18,10 +18,10 @@ All requests to the edge have the same format with varying `method` and `params`
 
 ```json
 {
-    "method": "add", // the name of the function
+    "method": "add", 
     "id": 0,
     "jsonrpc": "2.0",
-    "params": { // the optional arguments of the function
+    "params": { 
         "a": 1,
         "b": 2,
     }
@@ -34,10 +34,10 @@ Similarly, all results follow the same format:
 ```json
 {
     "jsonrpc": "2.0",
-    "result": { // returned by function
+    "result": { 
         "sum": 3
     },
-    "error": {}, // if needed
+    "error": {}, 
     "id": 3
 }
 ```
