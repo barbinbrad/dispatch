@@ -6,11 +6,11 @@ Dispatch is a JSON RPC proxy server written in go that allows an edge device to 
 
 ## The Problem
 
-A server is normally used to expose an RPC interface. A mobile edge devices faces the following problems when trying to act as an RPC server:
+A server is normally used to expose an RPC interface. Mobile edge devices face the following problems when trying to act as an RPC server:
 
 - Connection is intermittent
-- IP addresses can change
-- Limited computational resources are spent on edge computing
+- IP addresses change
+- Web servers cost a lot of CPU
 
 ## The Solution
 
