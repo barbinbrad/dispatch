@@ -1,6 +1,6 @@
 # Dispatch
 
-To run the examples, first start the proxy server. Then the edge device. Then the client.
+Dispatch is a JSON RPC proxy server written in go that allows an edge device to serve as an RPC server. To run the examples, first start the proxy server. Then the edge device. Then the client.
 
 ![diagram](https://raw.githubusercontent.com/barbinbrad/dispatch/master/assets/diagram.png)
 
