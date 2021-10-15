@@ -25,7 +25,7 @@ const response = await fetch(url, {
 To run the tests, you can run:
 
 ```sh
-deno run --allow-net --allow-read  concurrent-clients.ts
+deno run --allow-net --allow-read  stress-test.ts
 ```
 
 - `-host` is where the proxy server is located
@@ -38,7 +38,7 @@ All of the flags are optional and will default to the values provided above.
 
 ## Installing Deno
 
-You can use any kind of client to make these HTTP requests, but Deno seemed like something fun to try. If you don't have Deno installed you can run:
+You can use any kind of client to make these HTTP requests, but [Deno](https://deno.land) seemed like something fun to try. If you don't have Deno installed you can run:
 
 Shell (Mac, Linux):
 
