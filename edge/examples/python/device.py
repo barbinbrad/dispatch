@@ -193,12 +193,12 @@ def backoff(retries):
   return random.randrange(0, min(128, int(2 ** retries)))
 
 def main(host, dongleid):
-    ws_uri = host + '/' + dongleid
+    ws_uri = 'ws://localhost:4720' + '/' + dongleid
     print(ws_uri)
 
     while 1:
         try:
-            ws = create_connection(ws_uri, enable_multithread=True, timeout=30.0)
+            ws = create_connection(ws_uri, cookie="jwt=test", enable_multithread=True, timeout=30.0)
             conn_retries = 0
 
             handle_long_poll(ws)

@@ -2,34 +2,32 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
 )
 
-func (server *server) websocketHandler() http.HandlerFunc {
+func (s *server) websocketHandler() http.HandlerFunc {
 
 	var (
-		upgrader     = websocket.Upgrader{}
-		pingInterval = 5
-		waitInterval = 10
+		upgrader   = websocket.Upgrader{}
+		pingPeriod = 5
+		waitPeriod = 10
 	)
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		dongleId := r.URL.Query().Get(":dongle_id")
 		socket, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			log.Println("upgrade:", err)
+			http.Error(w, "Websocket handshake", http.StatusPreconditionFailed)
 		}
 
-		done := make(chan struct{})
-		connection, _ := NewConnection(socket, done)
+		connection, _ := NewConnection(socket)
 
-		server.AddConnection(dongleId, &connection)
-		defer server.CleanupConnection(dongleId, &connection)
+		s.AddConnection(dongleId, &connection)
 
-		go connection.PingAtInterval(pingInterval, waitInterval, done)
+		defer s.CleanupConnection(dongleId, &connection)
+		go connection.PingAtInterval(pingPeriod, waitPeriod)
 
 		for {
 			err := connection.ReceiveAndPublish(socket.ReadMessage())

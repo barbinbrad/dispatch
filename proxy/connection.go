@@ -15,22 +15,22 @@ type connection struct {
 	NextId           *uint32
 	Instances        *int32
 	ResponseRegistry map[uint32]chan string
-	Done             chan struct{}
+	Done             chan bool
 }
 
-func NewConnection(socket *websocket.Conn, ch chan struct{}) (connection, error) {
+func NewConnection(socket *websocket.Conn) (connection, error) {
 	c := connection{
 		Socket:           socket,
 		NextId:           new(uint32),
 		Instances:        new(int32),
 		ResponseRegistry: make(map[uint32]chan string),
-		Done:             ch,
+		Done:             make(chan bool),
 	}
 	atomic.AddInt32(c.Instances, 1)
 	return c, nil
 }
 
-func (c *connection) PingAtInterval(seconds int, wait int, done chan struct{}) {
+func (c *connection) PingAtInterval(seconds int, wait int) {
 	pingPeriod := time.Duration(seconds) * time.Second
 	waitPeriod := time.Duration(wait) * time.Second
 
@@ -42,7 +42,7 @@ func (c *connection) PingAtInterval(seconds int, wait int, done chan struct{}) {
 			if err := c.Socket.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(waitPeriod)); err != nil {
 				fmt.Println("ping", err)
 			}
-		case <-done:
+		case <-c.Done:
 			return
 		}
 	}
@@ -76,8 +76,13 @@ func (connection *connection) SendAndSubscribe(request JsonRPCRequest,
 
 func (c *connection) ReceiveAndPublish(messageType int, data []byte, err error) error {
 	var response JsonRPCResponse
+
 	if err != nil {
 		return err
+	}
+
+	if messageType != 1 {
+		return errors.New("invalid message type")
 	}
 
 	err = json.Unmarshal(data, &response)

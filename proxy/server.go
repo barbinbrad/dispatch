@@ -44,8 +44,9 @@ func (s *server) RemoveConnection(dongleId string) {
 }
 
 func (s *server) CleanupConnection(dongleId string, connection *connection) {
+	connection.Done <- true // stop the pinging
 	connection.Socket.Close()
-	<-connection.Done // stop the pinging
+	close(connection.Done)
 	s.RemoveConnection(dongleId)
 }
 
