@@ -26,7 +26,7 @@ log_recv_queue: Any = queue.Queue()
 
 def startLocalProxy(global_end_event, remote_ws_uri, local_port):
   try:
-    print("athena.startLocalProxy.starting")
+    print("dispatch.startLocalProxy.starting")
     ws = create_connection(remote_ws_uri,
                            #cookie="jwt=" + identity_token,
                            enable_multithread=True)
@@ -44,10 +44,10 @@ def startLocalProxy(global_end_event, remote_ws_uri, local_port):
     for thread in threads:
       thread.start()
 
-    print("athena.startLocalProxy.started")
+    print("dispatch.startLocalProxy.started")
     return {"success": 1}
   except Exception as e:
-    print("athenad.startLocalProxy.exception")
+    print("dispatchd.startLocalProxy.exception")
     raise e
 
 def jsonrpc_handler(end_event):
@@ -57,7 +57,7 @@ def jsonrpc_handler(end_event):
             data = recv_queue.get(timeout=1)
 
             if "method" in data:
-                print(f"athena.jsonrpc_handler.call_method {data}")
+                print(f"dispatch.jsonrpc_handler.call_method {data}")
                 response = JSONRPCResponseManager.handle(data, dispatcher)
                 send_queue.put_nowait(response.json)
             elif "id" in data and ("result" in data or "error" in data):
@@ -67,7 +67,7 @@ def jsonrpc_handler(end_event):
         except queue.Empty:
             pass
         except Exception as e:
-            print("athena jsonrpc handler failed")
+            print("dispatch jsonrpc handler failed")
             send_queue.put_nowait(json.dumps({"error": str(e)}))
 
 @dispatcher.add_method
@@ -90,13 +90,13 @@ def ws_proxy_recv(ws, local_sock, ssock, end_event, global_end_event):
     except WebSocketTimeoutException:
       pass
     except Exception:
-      print("athenad.ws_proxy_recv.exception")
+      print("dispatchd.ws_proxy_recv.exception")
       break
 
-  print("athena.ws_proxy_recv closing sockets")
+  print("dispatch.ws_proxy_recv closing sockets")
   ssock.close()
   local_sock.close()
-  print("athena.ws_proxy_recv done closing sockets")
+  print("dispatch.ws_proxy_recv done closing sockets")
 
   end_event.set()
 
@@ -118,12 +118,12 @@ def ws_proxy_send(ws, local_sock, signal_sock, end_event):
 
         ws.send(data, ABNF.OPCODE_BINARY)
     except Exception:
-      print("athenad.ws_proxy_send.exception")
+      print("dispatchd.ws_proxy_send.exception")
       end_event.set()
 
-  print("athena.ws_proxy_send closing sockets")
+  print("dispatch.ws_proxy_send closing sockets")
   signal_sock.close()
-  print("athena.ws_proxy_send done closing sockets")
+  print("dispatch.ws_proxy_send done closing sockets")
 
 def ws_recv(ws, end_event):
     #last_ping = int(sec_since_boot() * 1e9)
@@ -140,10 +140,10 @@ def ws_recv(ws, end_event):
                 #last_ping = int(sec_since_boot() * 1e9)
                 pass
         except WebSocketTimeoutException:
-            print("athenad.ws_recv.timeout")
+            print("dispatchd.ws_recv.timeout")
             end_event.set()
         except Exception:
-            print("athenad.ws_recv.exception")
+            print("dispatchd.ws_recv.exception")
             end_event.set()
 
 
@@ -162,7 +162,7 @@ def ws_send(ws, end_event):
     except queue.Empty:
       pass
     except Exception:
-      print("athenad.ws_send.exception")
+      print("dispatchd.ws_send.exception")
       end_event.set()
 
 def handle_long_poll(ws):
@@ -193,7 +193,7 @@ def backoff(retries):
   return random.randrange(0, min(128, int(2 ** retries)))
 
 def main(host, dongleid):
-    ws_uri = 'ws://localhost:4720' + '/' + dongleid
+    ws_uri = host + '/' + dongleid
     print(ws_uri)
 
     while 1:
@@ -211,7 +211,7 @@ def main(host, dongleid):
             pass
         except Exception as ex:
             print(ex)
-            print("athena.main.excpetion")
+            print("dispatch.main.excpetion")
 
         time.sleep(backoff(conn_retries))
 
